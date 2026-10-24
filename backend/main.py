@@ -1,10 +1,13 @@
 import base64
 import os
 import time
+from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import requests
+
+load_dotenv()  # Load variables from backend/.env into os.environ
 
 app = FastAPI(
     title="CodePulse AI Engine",
