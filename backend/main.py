@@ -44,6 +44,7 @@ async def audit_code_or_diagram(file: UploadFile = File(...)):
         start_time = time.time()
         contents = await file.read()
         base64_image = base64.b64encode(contents).decode("utf-8")
+        mime_type = file.content_type or "image/jpeg"
 
         prompt_instructions = (
             "You are CodePulse AI, an expert DevSecOps and System Architecture"
@@ -55,11 +56,9 @@ async def audit_code_or_diagram(file: UploadFile = File(...)):
             "1. **[SEVERITY] Issue Name**: Detailed explanation.\n"
             "2. **[SEVERITY] Issue Name**: Detailed explanation.\n\n"
             "### 🛠️ RECOMMENDED ARCHITECTURE PATCH\n"
-            "
-```yaml\n"
+            "```yaml\n"
             "# Security remediation policy / infrastructure code snippet\n"
-            "
-```\n\n"
+            "```\n\n"
             "### ⚡ ANTI-GRAVITY AGENT SUMMARY\n"
             "- Threat Level: [State level]\n"
             "- Compliance Status: SOC2 / OWASP Top 10 check status."
@@ -82,7 +81,7 @@ async def audit_code_or_diagram(file: UploadFile = File(...)):
                         {
                             "type": "image_url",
                             "image_url": {
-                                "url": f"data:image/jpeg;base64,{base64_image}"
+                                "url": f"data:{mime_type};base64,{base64_image}"
                             },
                         },
                     ],
@@ -117,7 +116,7 @@ async def audit_code_or_diagram(file: UploadFile = File(...)):
                                 {"text": prompt_instructions},
                                 {
                                     "inline_data": {
-                                        "mime_type": "image/jpeg",
+                                        "mime_type": mime_type,
                                         "data": base64_image,
                                     }
                                 },
@@ -152,8 +151,7 @@ async def audit_code_or_diagram(file: UploadFile = File(...)):
                 "2. **[HIGH] Plaintext Database Connection**: Microservice DB connector communicates over unencrypted TCP port 5432.\n"
                 "3. **[MEDIUM] Missing CORS Policy**: Wildcard (`*`) origin headers allowed across public microservices.\n\n"
                 "### 🛠️ RECOMMENDED ARCHITECTURE PATCH\n"
-                "
-```yaml\n"
+                "```yaml\n"
                 "apiVersion: networking.k8s.io/v1\n"
                 "kind: NetworkPolicy\n"
                 "metadata:\n"
@@ -167,8 +165,7 @@ async def audit_code_or_diagram(file: UploadFile = File(...)):
                 "    - podSelector:\n"
                 "        matchLabels:\n"
                 "          role: api-backend\n"
-                "
-```\n\n"
+                "```\n\n"
                 "### ⚡ ANTI-GRAVITY AGENT SUMMARY\n"
                 "- Threat Level: HIGH (Immediate patch required)\n"
                 "- Compliance Status: OWASP Top 10 Violated (A02:2021 Cryptographic Failures)"
